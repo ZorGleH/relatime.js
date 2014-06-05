@@ -89,7 +89,9 @@ var relatime = (function () {
     },
     fmt = function (t, n) {
       var date = new Date(n);
-      if (t !== 'month') {
+      if (t === 'year') {
+        return dic[loc].months[date.getMonth()].replace('%d', date.getDate()) + ' ' + date.getFullYear();
+      } else if (t !== 'month') {
         n = Math.round(n);
         return dic.all[t].replace('%d', n);
       } else {
@@ -98,11 +100,17 @@ var relatime = (function () {
     },
     text = function (d, _) {
       var e = _ || delta(d);
-      if (e < 0) { return fmt('month', d); }
-      if (e < 60) { return dic[loc].now; }
-      if (e < 3600) { return fmt('min', e / 60); }
-      if (e < 86400) { return fmt('h', e / 3600); }
-      return fmt('month', d);
+      // Between 1 min ago and now
+      if (e >= 0 && e < 60) { return dic[loc].now; }
+      // Between 1 min ago and 1 hour ago
+      if (e >= 60 && e < 60 * 60) { return fmt('min', e / 60); }
+      // Between 1 hour ago and 1 day ago
+      if (e >= 60 * 60 && e < 24 * 60 * 60) { return fmt('h', e / (60 * 60)); }
+      // Between 1 day ago and 1 year ago
+      if (e >= 24 * 60 * 60 && e < 365 * 24 * 60 * 60) { return fmt('month', d) }
+      // Else
+      return fmt('year', d);
+
     },
     refresh = function () {
       var e, d, i = 0,

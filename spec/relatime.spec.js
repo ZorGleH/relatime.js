@@ -4,6 +4,9 @@ describe('relatime', function () {
   function getDateWithMonthFrench(date) {
     return date.getDate() + ' ' + months[date.getMonth()];
   }
+  function getDateWithMonthAndYearFrench(date) {
+    return date.getDate() + ' ' + months[date.getMonth()] + ' ' + date.getFullYear();
+  }
 
   describe('setup()', function () {
 
@@ -60,6 +63,7 @@ describe('relatime', function () {
 
     it('should return a relative representation of date', function () {
       var dates = {
+        pastYears: new Date(Date.now() - 366 * 60 * 60 * 24 * 1000),
         pastDays: new Date(Date.now() - 10 * 60 * 60 * 24 * 1000),
         pastHours: new Date(Date.now() - 10 * 60 * 60 * 1000),
         pastMinutes: new Date(Date.now() - 10 * 60 * 1000),
@@ -72,6 +76,8 @@ describe('relatime', function () {
       };
       // Set locale to be sure
       relatime.locale('fr');
+      // Past years
+      expect(relatime.text(dates.pastYears)).toEqual(getDateWithMonthAndYearFrench(dates.pastYears));
       // Past days
       expect(relatime.text(dates.pastDays)).toEqual(getDateWithMonthFrench(dates.pastDays));
       // Past hours
@@ -85,13 +91,13 @@ describe('relatime', function () {
       // Now with string
       expect(relatime.text((dates.now).toString())).toEqual('maintenant');
       // Future seconds
-      expect(relatime.text(dates.futureSeconds)).toEqual(getDateWithMonthFrench(dates.futureSeconds));
+      expect(relatime.text(dates.futureSeconds)).toEqual(getDateWithMonthAndYearFrench(dates.futureSeconds));
       // Future minutes
-      expect(relatime.text(dates.futureMinutes)).toEqual(getDateWithMonthFrench(dates.futureMinutes));
+      expect(relatime.text(dates.futureMinutes)).toEqual(getDateWithMonthAndYearFrench(dates.futureMinutes));
       // Future hours
-      expect(relatime.text(dates.futureHours)).toEqual(getDateWithMonthFrench(dates.futureHours));
+      expect(relatime.text(dates.futureHours)).toEqual(getDateWithMonthAndYearFrench(dates.futureHours));
       // Future days
-      expect(relatime.text(dates.futureDays)).toEqual(getDateWithMonthFrench(dates.futureDays));
+      expect(relatime.text(dates.futureDays)).toEqual(getDateWithMonthAndYearFrench(dates.futureDays));
     });
 
   });
@@ -100,7 +106,7 @@ describe('relatime', function () {
 
     it('should return a relative representation of date embedded in an auto-updated time tag', function () {
       var now = new Date();
-      expect(relatime.html(new Date('2013-04-23T13:27:32.631Z'))).toEqual('<span title="23/4/2013 15:27:32">23 avr.</span>');
+      expect(relatime.html(new Date('2013-04-23T13:27:32.631Z'))).toEqual('<span title="23/4/2013 15:27:32">23 avr. 2013</span>');
       expect(relatime.html(now)).toEqual(
         '<span class="relative-time" datetime="%datetime" title="%day/%month/%year %hours:%minute:%second">maintenant</span>'
           .replace('%datetime', now.toISOString())
