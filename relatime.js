@@ -118,7 +118,7 @@ var relatime = (function () {
       while (i < nl.length) {
         e = nl[i];
         d = e.getAttribute('datetime');
-        if (d) { e.innerText = text(d); }
+        if (d) { e.innerHTML = text(d); }
         ++i;
       }
     },
